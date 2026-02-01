@@ -1,0 +1,72 @@
+info:
+  contact: {}
+paths:
+  /api/download/{filename}:
+    get:
+      description: Faz o download de um arquivo pelo nome
+      parameters:
+      - description: Nome do arquivo
+        in: path
+        name: filename
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: Arquivo para download
+          schema:
+            type: file
+        "404":
+          description: Arquivo não encontrado
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Download de arquivo processado
+      tags:
+      - Video
+  /api/health:
+    get:
+      description: Retorna o status do serviço
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Health check
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Status da API
+      tags:
+      - System
+  /api/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Recebe um arquivo de vídeo para processamento
+      parameters:
+      - description: Arquivo de vídeo
+        in: formData
+        name: video
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Upload realizado com sucesso
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Erro no upload
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Upload de vídeo
+      tags:
+      - Video
+swagger: "2.0"
