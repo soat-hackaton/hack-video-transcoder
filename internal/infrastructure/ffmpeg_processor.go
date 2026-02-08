@@ -23,10 +23,23 @@ func (p *FFmpegProcessor) Process(videoPath, timestamp string) video.ProcessingR
 	framePattern := filepath.Join(tempDir, "frame_%04d.png")
 
 	cmd := exec.Command("ffmpeg", "-i", videoPath, "-vf", "fps=1", "-y", framePattern)
-	if output, err := cmd.CombinedOutput(); err != nil {
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+
+		exitCode := -1
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			exitCode = exitErr.ExitCode()
+		}
+
 		return video.ProcessingResult{
 			Success: false,
-			Message: fmt.Sprintf("Erro no ffmpeg: %s", string(output)),
+			Message: fmt.Sprintf(
+				"Erro no ffmpeg (exit=%d): %v\nComando: %s\nOutput:\n%s",
+				exitCode,
+				err,
+				cmd.String(),
+				string(output),
+			),
 		}
 	}
 
