@@ -110,16 +110,13 @@ jobs:
         env:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}:${{ env.SHORT_SHA }}
           REPOSITORY_NAME: ${{ github.event.repository.name }}
-          SOAT_SECRET_KEY: ${{ secrets.SOAT_SECRET_KEY }}
         run: |
           export K8S_IMAGE_TAG=${{ env.ECR_REPOSITORY }}
           export REPOSITORY_NAME=${{ env.REPOSITORY_NAME }}
-          export SOAT_SECRET_KEY=${{ env.SOAT_SECRET_KEY }}
 
           envsubst < infra/namespace.yml | sponge infra/namespace.yml
-          envsubst < infra/secrets/auth-backend.yml | sponge infra/secrets/auth-backend.yml
-          envsubst < infra/deployments/auth-backend.yml | sponge infra/deployments/auth-backend.yml
-          envsubst < infra/services/auth-backend.yml | sponge infra/services/auth-backend.yml
+          envsubst < infra/deployments/hack-video-transcoder.yml | sponge infra/deployments/hack-video-transcoder.yml
+          envsubst < infra/services/hack-video-transcoder.yml | sponge infra/services/hack-video-transcoder.yml
 
           kubectl apply -k infra/
-          kubectl rollout status deployment/auth-service-backend -n auth-service
+          kubectl rollout status deployment/hack-video-transcoder -n hack-video-transcoder

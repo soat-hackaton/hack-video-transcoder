@@ -1,0 +1,5 @@
+resources:
+  - ./namespace.yml
+  - ./deployments/hack-video-transcoder.yml
+  - ./services/hack-video-transcoder.yml
+  - ./hpas/hack-video-transcoder.yml
