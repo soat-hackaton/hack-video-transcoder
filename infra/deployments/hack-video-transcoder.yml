@@ -32,9 +32,6 @@ spec:
             limits:
               cpu: "500m"
               memory: "256Mi"
-          envFrom:
-            - secretRef:
-                name: hack-video-transcoder-secret
           startupProbe:
             httpGet:
               path: /api/health
