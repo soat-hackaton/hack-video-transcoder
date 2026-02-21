@@ -10,7 +10,7 @@ metadata:
     maintainer: "SOAT - Grupo 75"
     description: "Deployment do backend da aplicação Python"
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: hack-video-transcoder
