@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/philipphahmann/hack-video-transcoder/internal/application/ports"
 	video "github.com/philipphahmann/hack-video-transcoder/internal/domain/video"
@@ -18,6 +19,7 @@ func NewProcessVideoUseCase(p video.Processor) ports.ProcessVideoUseCase {
 }
 
 func (uc *ProcessVideoUseCaseImpl) Execute(ctx context.Context, videoPath, timestamp string) video.ProcessingResult {
+	slog.InfoContext(ctx, "Caso de uso de processamento de vídeo acionado", slog.String("videoPath", videoPath))
 	return uc.processor.Process(ctx, videoPath, timestamp)
 }
 

@@ -7,11 +7,14 @@ import (
 	handlers "github.com/philipphahmann/hack-video-transcoder/internal/adapters/input/api/handlers"
 	usecases "github.com/philipphahmann/hack-video-transcoder/internal/application/usecases"
 	infra "github.com/philipphahmann/hack-video-transcoder/internal/infrastructure"
+	"github.com/philipphahmann/hack-video-transcoder/pkg/logger"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
+	logger.Setup()
+
 	r := gin.Default()
 
 	processor := infra.NewFFmpegProcessor()
