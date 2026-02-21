@@ -20,10 +20,14 @@ func (p *FFmpegProcessor) Process(videoPath, timestamp string) video.ProcessingR
 	os.MkdirAll(tempDir, 0755)
 	defer os.RemoveAll(tempDir)
 
-	framePattern := filepath.Join(tempDir, "frame_%04d.png")
+	framePattern := filepath.Join(tempDir, "frame_%04d.jpg")
 
-	cmd := exec.Command("ffmpeg", "-i", videoPath, "-vf", "fps=1", "-y", framePattern)
-	output, err := cmd.CombinedOutput()
+	cmd := exec.Command("ffmpeg", "-threads", "1", "-i", videoPath, "-vf", "fps=1,scale=-1:720", "-q:v", "2", "-y", framePattern)
+	outputBytes, err := cmd.CombinedOutput()
+	outputStr := string(outputBytes)
+	if len(outputStr) > 2000 {
+		outputStr = "..." + outputStr[len(outputStr)-2000:]
+	}
 	if err != nil {
 
 		exitCode := -1
@@ -38,12 +42,12 @@ func (p *FFmpegProcessor) Process(videoPath, timestamp string) video.ProcessingR
 				exitCode,
 				err,
 				cmd.String(),
-				string(output),
+				outputStr,
 			),
 		}
 	}
 
-	frames, _ := filepath.Glob(filepath.Join(tempDir, "*.png"))
+	frames, _ := filepath.Glob(filepath.Join(tempDir, "*.jpg"))
 	if len(frames) == 0 {
 		return video.ProcessingResult{Success: false, Message: "Nenhum frame extraído"}
 	}

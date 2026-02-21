@@ -21,7 +21,12 @@ func CreateZip(files []string, zipPath string) error {
 		f, _ := os.Open(file)
 		defer f.Close()
 
-		w, _ := writer.Create(filepath.Base(file))
+		info, _ := f.Stat()
+		header, _ := zip.FileInfoHeader(info)
+		header.Name = filepath.Base(file)
+		header.Method = zip.Store
+
+		w, _ := writer.CreateHeader(header)
 		io.Copy(w, f)
 	}
 	return nil
