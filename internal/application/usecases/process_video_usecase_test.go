@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"context"
 	"testing"
 
 	"github.com/philipphahmann/hack-video-transcoder/internal/domain/video"
@@ -10,7 +11,7 @@ type VideoProcessorMock struct {
 	Result video.ProcessingResult
 }
 
-func (m *VideoProcessorMock) Process(videoPath string, timestamp string) video.ProcessingResult {
+func (m *VideoProcessorMock) Process(ctx context.Context, videoPath string, timestamp string) video.ProcessingResult {
 	return m.Result
 }
 
@@ -25,7 +26,7 @@ func TestProcessVideoUseCase_Success(t *testing.T) {
 
 	useCase := NewProcessVideoUseCase(mock)
 
-	result := useCase.Execute("video.mp4", "123")
+	result := useCase.Execute(context.TODO(), "video.mp4", "123")
 
 	if !result.Success {
 		t.Fatalf("expected success=true")

@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"context"
+
 	"github.com/philipphahmann/hack-video-transcoder/internal/application/ports"
 	video "github.com/philipphahmann/hack-video-transcoder/internal/domain/video"
 )
@@ -15,8 +17,8 @@ func NewProcessVideoUseCase(p video.Processor) ports.ProcessVideoUseCase {
 	}
 }
 
-func (uc *ProcessVideoUseCaseImpl) Execute(videoPath, timestamp string) video.ProcessingResult {
-	return uc.processor.Process(videoPath, timestamp)
+func (uc *ProcessVideoUseCaseImpl) Execute(ctx context.Context, videoPath, timestamp string) video.ProcessingResult {
+	return uc.processor.Process(ctx, videoPath, timestamp)
 }
 
 // package usecases

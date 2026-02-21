@@ -1,6 +1,7 @@
 package video
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -15,14 +16,14 @@ func NewFFmpegProcessor() *FFmpegProcessor {
 	return &FFmpegProcessor{}
 }
 
-func (p *FFmpegProcessor) Process(videoPath, timestamp string) video.ProcessingResult {
+func (p *FFmpegProcessor) Process(ctx context.Context, videoPath, timestamp string) video.ProcessingResult {
 	tempDir := filepath.Join("temp", timestamp)
 	os.MkdirAll(tempDir, 0755)
 	defer os.RemoveAll(tempDir)
 
 	framePattern := filepath.Join(tempDir, "frame_%04d.jpg")
 
-	cmd := exec.Command("ffmpeg", "-threads", "1", "-i", videoPath, "-vf", "fps=1,scale=-1:720", "-q:v", "2", "-y", framePattern)
+	cmd := exec.CommandContext(ctx, "ffmpeg", "-threads", "1", "-i", videoPath, "-vf", "fps=1,scale=-1:720", "-q:v", "2", "-y", framePattern)
 	outputBytes, err := cmd.CombinedOutput()
 	outputStr := string(outputBytes)
 	if len(outputStr) > 2000 {

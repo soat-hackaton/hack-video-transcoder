@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
@@ -13,7 +14,7 @@ import (
 
 type ProcessVideoUseCaseMock struct{}
 
-func (m *ProcessVideoUseCaseMock) Execute(videoPath, timestamp string) video.ProcessingResult {
+func (m *ProcessVideoUseCaseMock) Execute(ctx context.Context, videoPath, timestamp string) video.ProcessingResult {
 	return video.ProcessingResult{
 		Success: true,
 		Message: "ok",

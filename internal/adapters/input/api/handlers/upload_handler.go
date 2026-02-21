@@ -51,6 +51,6 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 
 	c.SaveUploadedFile(header, path)
 
-	result := h.useCase.Execute(path, filename)
+	result := h.useCase.Execute(c.Request.Context(), path, filename)
 	c.JSON(200, result)
 }
