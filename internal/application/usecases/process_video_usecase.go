@@ -18,9 +18,9 @@ func NewProcessVideoUseCase(p video.Processor) ports.ProcessVideoUseCase {
 	}
 }
 
-func (uc *ProcessVideoUseCaseImpl) Execute(ctx context.Context, videoPath, timestamp string) video.ProcessingResult {
+func (uc *ProcessVideoUseCaseImpl) Execute(ctx context.Context, videoPath, taskID string) video.ProcessingResult {
 	slog.InfoContext(ctx, "Caso de uso de processamento de vídeo acionado", slog.String("videoPath", videoPath))
-	return uc.processor.Process(ctx, videoPath, timestamp)
+	return uc.processor.Process(ctx, videoPath, taskID)
 }
 
 // package usecases

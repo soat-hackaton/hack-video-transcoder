@@ -41,10 +41,13 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 	}
 	defer file.Close()
 
-	id := uuid.New()
-	filename := id.String() // Usado como task_id
+	taskID := c.PostForm("task_id")
+	if taskID == "" {
+		id := uuid.New()
+		taskID = id.String() // Fallback
+	}
 
-	ctx := logger.WithCorrelationID(c.Request.Context(), filename)
+	ctx := logger.WithCorrelationID(c.Request.Context(), taskID)
 	slog.InfoContext(ctx, "Iniciando processo de solicitação de upload", slog.String("video_filename", header.Filename), slog.String("step", "request_upload_start"))
 
 	if !utils.IsValidVideoFile(header.Filename) {
@@ -58,7 +61,7 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 		return
 	}
 
-	path := filepath.Join("uploads", filename)
+	path := filepath.Join("uploads", taskID)
 
 	err = c.SaveUploadedFile(header, path)
 	if err != nil {
@@ -70,7 +73,7 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 
 	slog.InfoContext(ctx, "Vídeo salvo com sucesso, enviando para processamento", slog.String("path", path))
 
-	result := h.useCase.Execute(ctx, path, filename)
+	result := h.useCase.Execute(ctx, path, taskID)
 
 	if result.Success {
 		slog.InfoContext(ctx, "Processamento finalizado com sucesso", slog.String("step", "request_upload_success"))

@@ -17,10 +17,10 @@ func NewFFmpegProcessor() *FFmpegProcessor {
 	return &FFmpegProcessor{}
 }
 
-func (p *FFmpegProcessor) Process(ctx context.Context, videoPath, timestamp string) video.ProcessingResult {
-	slog.InfoContext(ctx, "Iniciando processo de conversão do vídeo", slog.String("videoPath", videoPath), slog.String("timestamp", timestamp))
+func (p *FFmpegProcessor) Process(ctx context.Context, videoPath, taskID string) video.ProcessingResult {
+	slog.InfoContext(ctx, "Iniciando processo de conversão do vídeo", slog.String("videoPath", videoPath), slog.String("task_id", taskID))
 
-	tempDir := filepath.Join("temp", timestamp)
+	tempDir := filepath.Join("temp", taskID)
 	os.MkdirAll(tempDir, 0755)
 	defer os.RemoveAll(tempDir)
 
@@ -64,7 +64,7 @@ func (p *FFmpegProcessor) Process(ctx context.Context, videoPath, timestamp stri
 
 	slog.InfoContext(ctx, "Frames extraídos com sucesso", slog.Int("frameCount", len(frames)))
 
-	zipPath := filepath.Join("outputs", "frames_"+timestamp+".zip")
+	zipPath := filepath.Join("outputs", "frames_"+taskID+".zip")
 	slog.InfoContext(ctx, "Iniciando compactação dos frames", slog.String("zipPath", zipPath))
 
 	if err := CreateZip(frames, zipPath); err != nil {

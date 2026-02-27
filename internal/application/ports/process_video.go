@@ -7,5 +7,5 @@ import (
 )
 
 type ProcessVideoUseCase interface {
-	Execute(ctx context.Context, videoPath, timestamp string) video.ProcessingResult
+	Execute(ctx context.Context, videoPath, taskID string) video.ProcessingResult
 }
