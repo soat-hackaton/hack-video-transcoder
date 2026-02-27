@@ -5,6 +5,7 @@ import (
 	_ "github.com/philipphahmann/hack-video-transcoder/docs"
 	api "github.com/philipphahmann/hack-video-transcoder/internal/adapters/input/api"
 	handlers "github.com/philipphahmann/hack-video-transcoder/internal/adapters/input/api/handlers"
+	middleware "github.com/philipphahmann/hack-video-transcoder/internal/adapters/input/api/middleware"
 	usecases "github.com/philipphahmann/hack-video-transcoder/internal/application/usecases"
 	infra "github.com/philipphahmann/hack-video-transcoder/internal/infrastructure"
 	"github.com/philipphahmann/hack-video-transcoder/pkg/logger"
@@ -15,7 +16,9 @@ import (
 func main() {
 	logger.Setup()
 
-	r := gin.Default()
+	r := gin.New()
+	r.Use(middleware.LoggerMiddleware())
+	r.Use(gin.Recovery())
 
 	processor := infra.NewFFmpegProcessor()
 	useCase := usecases.NewProcessVideoUseCase(processor)

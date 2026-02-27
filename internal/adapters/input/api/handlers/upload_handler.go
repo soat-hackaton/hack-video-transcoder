@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log/slog"
 	"path/filepath"
 
@@ -34,6 +35,7 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 	file, header, err := c.Request.FormFile("video")
 
 	if err != nil {
+		c.Error(err)
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
@@ -46,10 +48,12 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 	slog.InfoContext(ctx, "Iniciando processo de solicitação de upload", slog.String("video_filename", header.Filename), slog.String("step", "request_upload_start"))
 
 	if !utils.IsValidVideoFile(header.Filename) {
+		err := fmt.Errorf("formato de arquivo não suportado")
+		c.Error(err)
 		slog.ErrorContext(ctx, "Formato de arquivo não suportado", slog.String("video_filename", header.Filename))
 		c.JSON(400, gin.H{
 			"success": false,
-			"message": "Formato de arquivo não suportado",
+			"message": err.Error(),
 		})
 		return
 	}
@@ -58,6 +62,7 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 
 	err = c.SaveUploadedFile(header, path)
 	if err != nil {
+		c.Error(err)
 		slog.ErrorContext(ctx, "Erro crítico ao salvar arquivo enviado", slog.String("error", err.Error()))
 		c.JSON(500, gin.H{"error": "Erro interno ao salvar arquivo"})
 		return
@@ -70,7 +75,10 @@ func (h *UploadHandler) Upload(c *gin.Context) {
 	if result.Success {
 		slog.InfoContext(ctx, "Processamento finalizado com sucesso", slog.String("step", "request_upload_success"))
 	} else {
-		slog.ErrorContext(ctx, "Erro no processamento do vídeo", slog.String("message", result.Message))
+		c.Error(fmt.Errorf("%s", result.Message))
+		// Força um Status de erro caso o use case tenha falhado
+		c.JSON(500, result)
+		return
 	}
 
 	c.JSON(200, result)

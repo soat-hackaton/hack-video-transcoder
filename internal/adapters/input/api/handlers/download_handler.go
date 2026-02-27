@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -21,6 +22,7 @@ func DownloadHandler(c *gin.Context) {
 	filePath := filepath.Join("outputs", filename)
 
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		c.Error(fmt.Errorf("arquivo não encontrado: %s", filename))
 		c.JSON(404, gin.H{"error": "Arquivo não encontrado"})
 		return
 	}
