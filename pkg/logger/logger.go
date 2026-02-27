@@ -25,6 +25,13 @@ func GetCorrelationID(ctx context.Context) string {
 func Setup() {
 	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelInfo,
+		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
+			// Renomear a chave interna de mensagem para ficar igual aos logs em Python
+			if a.Key == slog.MessageKey {
+				a.Key = "message"
+			}
+			return a
+		},
 	})
 
 	// Correlate logger wraps the base handler to automatically append task_id from context
