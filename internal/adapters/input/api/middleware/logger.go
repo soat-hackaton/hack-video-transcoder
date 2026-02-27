@@ -35,7 +35,6 @@ func LoggerMiddleware() gin.HandlerFunc {
 		}
 
 		attrs := []slog.Attr{
-			slog.String("level", level),
 			slog.String("method", method),
 			slog.String("path", path),
 			slog.Int("status_code", statusCode),
